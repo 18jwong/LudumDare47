@@ -7,6 +7,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float movementSpeed = 1f;
     [SerializeField] private float verticalSpeed = 1f;
     [SerializeField] private float verticalHeight = 1f;
+    [SerializeField] private AudioSource moveUpSound = null;
+    [SerializeField] private AudioSource moveDownSound = null;
 
     private GameController gameController;
 
@@ -35,6 +37,8 @@ public class PlayerMovement : MonoBehaviour
         if(Input.GetKeyDown("e"))
         {   
             up = !up;
+            if(!up) moveDownSound.Play();
+            if(up) moveUpSound.Play();
         }
     }
 

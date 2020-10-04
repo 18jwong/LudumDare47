@@ -5,6 +5,7 @@ using TMPro;
 
 public class UpgradesController : MonoBehaviour
 {
+    [SerializeField] private int startingCurrency = 0;
     [SerializeField] private TMP_Text currencyText = null;
     [SerializeField] private string currencyString = "Total Blobs = "; //<O> + <C> = <T>"
     [SerializeField] private PlayerStats player = null;
@@ -13,6 +14,7 @@ public class UpgradesController : MonoBehaviour
     [SerializeField] private float maxSize = 2f;
     [SerializeField] private TMP_Text speedText = null;
     [SerializeField] private string speedString = "Speed: ";
+    [SerializeField] private float maxSpeed = 10f;
     [SerializeField] private TMP_Text spawnRateText = null;
     [SerializeField] private string spawnRateString = "Spawn Rate: ";
     [SerializeField] private TMP_Text blobSizeText = null;
@@ -35,6 +37,8 @@ public class UpgradesController : MonoBehaviour
     {
         gameController = GameController.instance;
         spawner = Spawner.instance;
+
+        currentCurrency = startingCurrency;
     }
 
     public void UpdateUI(int _score)
@@ -47,11 +51,26 @@ public class UpgradesController : MonoBehaviour
 
     public void IncreaseSize()
     {
-        if(currentSize > maxSize) return;
-        if(CheckCost(1)) return;
-        currentCurrency--;
+        // shift click
+        if(Input.GetKey(KeyCode.LeftShift) && !CheckCost(10))
+        {
+            if(currentSize + 1f > maxSize) return;
+            currentCurrency -= 10;
+            currentSize += 1f;
+        }
+        else if(Input.GetKey(KeyCode.LeftControl) && !CheckCost(100)) // crtl click
+        {
+            if(currentSize + 10f > maxSize) return;
+            currentCurrency -= 100;
+            currentSize += 10f;
+        }
+        else if(!CheckCost(1)) // one
+        {
+            if(currentSize > maxSize) return;
+            currentCurrency--;
+            currentSize += 0.1f;
+        }
 
-        currentSize += 0.1f;
         player.UpdateSize(currentSize);
         sizeText.text = sizeString + Mathf.Round(currentSize*100f)/100f + " / " + maxSize;
         UpdateUIAfterPurchase();
@@ -59,26 +78,56 @@ public class UpgradesController : MonoBehaviour
 
     public void IncreaseSpeed()
     {
-        if(CheckCost(1)) return;
-        currentCurrency--;
+        // shift click
+        if(Input.GetKey(KeyCode.LeftShift) && !CheckCost(10))
+        {
+            if(currentSpeed + 1f > maxSpeed) return;
+            currentCurrency -= 10;
+            currentSpeed += 1f;
+        }
+        else if(Input.GetKey(KeyCode.LeftControl) && !CheckCost(100)) // crtl click
+        {
+            if(currentSpeed + 10f > maxSpeed) return;
+            currentCurrency -= 100;
+            currentSpeed += 10f;
+        }
+        else if(!CheckCost(1)) // one
+        {
+            if(currentSpeed > maxSpeed) return;
+            currentCurrency--;
+            currentSpeed += 0.1f;
+        }
 
-        currentSpeed += 0.1f;
         player.UpdateSpeed(currentSpeed);
-        speedText.text = speedString + Mathf.Round(currentSpeed*100f)/100f;
+        speedText.text = speedString + Mathf.Round(currentSpeed*100f)/100f + " / " + maxSpeed;
         UpdateUIAfterPurchase();
     }
 
     public void IncreaseSpawnRate()
     {
-        if(CheckCost(1)) return;
-        currentCurrency--;
+        // shift click
+        if(Input.GetKey(KeyCode.LeftShift) && !CheckCost(10))
+        {
+            currentCurrency -= 10;
+            currentSpawnRate += 1f;
+        }
+        else if(Input.GetKey(KeyCode.LeftControl) && !CheckCost(100)) // crtl click
+        {
+            currentCurrency -= 100;
+            currentSpawnRate += 10f;
+        }
+        else if(!CheckCost(1)) // one
+        {
+            currentCurrency--;
+            currentSpawnRate += 0.1f;
+        }
 
-        currentSpawnRate += 0.1f;
-        spawner.AddToSpawnRate(0.1f);
+        spawner.SetSpawnRate(currentSpawnRate);
         spawnRateText.text = spawnRateString + Mathf.Round(currentSpawnRate*100f)/100f;
         UpdateUIAfterPurchase();
     }
 
+    // returns true if negative after subtracting i
     private bool CheckCost(int i)
     {
         return (currentCurrency - i) < 0;

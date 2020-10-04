@@ -33,7 +33,7 @@ public class Spawner : MonoBehaviour
 
     void SpawnABlob()
     {
-        int p = (int)Mathf.Round(Random.Range(0,3));
+        int p = Random.Range(0,spawnPoint.Length);
         GameObject blob = Instantiate(blobPrefab, spawnPoint[p].position, Quaternion.identity);
         blobs.Add(blob);
     }
@@ -50,14 +50,19 @@ public class Spawner : MonoBehaviour
 
     public void KillAllBlobs()
     {
-        StopSpawning();
         foreach(GameObject g in blobs)
         {
             Destroy(g);
         }
     }
 
-    public void AddToSpawnRate(float i){
+    public void AddToSpawnRate(float i)
+    {
         spawnRate += i;
+    }
+
+    public void SetSpawnRate(float i)
+    {
+        spawnRate = i;
     }
 }

@@ -95,6 +95,7 @@ public class GameController : MonoBehaviour
         }
         upgradePanel.SetActive(true);
         UpdateUpgradePanel();
+        spawner.StopSpawning();
     }
 
     private void UpdateUpgradePanel()

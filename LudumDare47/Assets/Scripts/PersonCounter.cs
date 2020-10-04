@@ -6,6 +6,8 @@ public class PersonCounter : MonoBehaviour
 {
     [SerializeField] private Material originalMaterial = null;
     [SerializeField] private Material collectedMaterial = null;
+    [SerializeField] private AudioSource coinSound = null;
+    [SerializeField] private AudioSource coinDownSound = null;
 
     private GameController gameController;
 
@@ -20,6 +22,7 @@ public class PersonCounter : MonoBehaviour
         {
             gameController.AddToScore(1);
             other.GetComponent<MeshRenderer>().material = collectedMaterial;
+            coinSound.Play();
         }
     }
 
@@ -29,6 +32,7 @@ public class PersonCounter : MonoBehaviour
         {
             gameController.AddToScore(-1);
             other.GetComponent<MeshRenderer>().material = originalMaterial;
+            coinDownSound.Play();
         }
     }
 }
